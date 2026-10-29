@@ -3,6 +3,19 @@
 The MIT licence in this repository covers **code**. It does not grant any right
 to the project names, logos or other WinterGate marks.
 
+## Authorship and official project
+
+VoiceForge is created, maintained and published by WinterGate Intelligence
+Collective (WIC), an independent, privacy-first collective founded by
+AnonCatalyst. WIC is the originating author and publisher of the official
+project. It is not a subsidiary, affiliate, agent or property of any other
+organization, and no third party has been granted ownership, authorship or
+official status over the project or its marks.
+
+The marks below identify that project. Registration is not what makes the
+project official: this repository, published by WIC, is the source of truth for
+what is and is not an official release.
+
 ## Marks
 
 - WinterGate, WinterGate Intelligence Collective
@@ -31,5 +44,12 @@ is a fork. "Based on VoiceForge (MIT)" is fine; "VoiceForge Pro" is not.
 
 Paid add-ons, licence keys and any "Pro" branding are proprietary and are not
 covered by the MIT licence of this repository.
+
+## Reporting impersonation
+
+If a project outside [WinterGate-IC](https://github.com/WinterGate-IC) presents
+itself as the official VoiceForge, or uses the marks in a way that implies
+endorsement, report it through <https://wintergate.org>. Include the URL and, if
+possible, a screenshot.
 
 Questions: <https://wintergate.org>

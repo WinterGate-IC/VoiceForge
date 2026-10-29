@@ -5,12 +5,14 @@
 VoiceForge releases are **not code-signed**. Windows SmartScreen may show
 "Unknown publisher" the first time you run the installer or the portable app.
 
-That is expected, not a sign of tampering. A publicly trusted signature requires
-a code-signing certificate whose subject is a **verified legal entity** (or a
-verified individual). WinterGate Intelligence Collective is not a registered
-legal entity, so no certificate can be issued in that name. Self-signed
-certificates do not help: Windows does not trust them, and they can make the
-warning worse.
+That is expected, not a sign of tampering. Certificate authorities issue
+publicly trusted code-signing certificates to verified organizations or
+verified individuals. WinterGate Intelligence Collective is an independent,
+privacy-first collective that has deliberately chosen not to incorporate as a
+conventional company. That operating choice does not make the project less
+legitimate or its authorship less real; it only means a CA cannot currently
+issue an OV certificate in the collective's name. Self-signed certificates do
+not help: Windows does not trust them, and they can make the warning worse.
 
 ## Verify what you downloaded
 
@@ -47,9 +49,11 @@ Any new certificate must build reputation through clean downloads.
 
 ## Path to signed releases
 
-When WinterGate has a legal entity, signing is a small, well-defined change:
+If the collective decides to form a signing entity, signing is a small,
+well-defined change:
 
-1. Register the entity (or a sole-proprietor/DBA name, if the CA accepts it).
+1. Form the entity the CA requires (or a sole-proprietor/DBA name, if the CA
+   accepts it).
 2. Buy an OV code-signing certificate (roughly **$120–350/year**; private key in
    a cloud HSM or FIPS 140-2 token; maximum validity is 460 days for
    certificates issued after March 2026).

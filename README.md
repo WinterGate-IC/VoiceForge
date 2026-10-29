@@ -3,6 +3,11 @@
 **Local text to speech with voices you own.**
 A WinterGate Intelligence Collective product.
 
+WIC is an independent, privacy-first collective and the originating author of
+this project. VoiceForge is its official project; the MIT licence covers the
+code, not the WinterGate, UmbraForge or VoiceForge names or logos. Forks are
+welcome but must use their own name — see [TRADEMARKS.md](TRADEMARKS.md).
+
 VoiceForge turns any amount of text into audio with voices you create, tune and
 keep. Output is **MP3 by default** (WAV, FLAC and OGG are one click away).
 Voices, renders and settings stay on your machine. No account, no cloud library,
@@ -58,9 +63,10 @@ to keep it.
 
 Releases are **not code-signed yet**, so Windows SmartScreen may show
 "Unknown publisher" the first time you run the installer or the app. That is
-expected; a trusted signature requires a certificate issued to a registered
-legal entity. See [CODE_SIGNING.md](CODE_SIGNING.md) for the status and the path
-to signed builds.
+expected: trusted signing certificates are issued by CAs to verified
+organizations or individuals, and WIC operates as an independent, privacy-first
+collective rather than a conventional company. See
+[CODE_SIGNING.md](CODE_SIGNING.md) for the status and the path to signed builds.
 
 Verify the bundle before running it:
 
