@@ -209,6 +209,26 @@ def _resolve_source(src: Path, source_root: Path | None) -> Path:
     return candidate
 
 
+def uploaded_file(root: Path, value: object) -> Path | None:
+    """Pick a file the web UI uploaded, by bare name, inside *root*.
+
+    The value arrives over HTTP, so it is treated as a name and never as a
+    path: the result always comes from listing *root*. A crafted request
+    therefore cannot name any other file on the machine (CWE-22).
+    """
+    if not value:
+        return None
+    name = Path(os.fspath(value)).name
+    try:
+        entries = {p.name: p for p in Path(root).iterdir() if p.is_file()}
+    except OSError as exc:
+        raise LibraryError(f"cannot read the upload folder: {exc}") from exc
+    match = entries.get(name)
+    if match is None:
+        raise LibraryError("the recording must be uploaded through the app")
+    return match
+
+
 def attach_sample(root: Path, name: str, src: Path,
                   source_root: Path | None = None) -> Path:
     src = _resolve_source(src, source_root)

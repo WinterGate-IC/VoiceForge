@@ -236,6 +236,26 @@ class TestLibrary(unittest.TestCase):
         library.attach_sample(self.root, "v4", inside, source_root=uploads)
         self.assertIsNotNone(library.audio_in(self.root, "v4"))
 
+    def test_uploaded_file_is_looked_up_by_name(self):
+        uploads = self.root / "uploads"
+        uploads.mkdir()
+        real = uploads / "recording.wav"
+        real.write_bytes(b"RIFF0000WAVE")
+        self.assertEqual(library.uploaded_file(uploads, str(real)), real)
+        # A request naming a file elsewhere cannot reach it: only the bare name
+        # is used, and the answer comes from listing the upload folder.
+        outside = self.root / "outside.wav"
+        outside.write_bytes(b"RIFF0000WAVE")
+        with self.assertRaises(library.LibraryError):
+            library.uploaded_file(uploads, str(outside))
+
+    def test_uploaded_file_rejects_names_that_were_never_uploaded(self):
+        uploads = self.root / "uploads"
+        uploads.mkdir()
+        with self.assertRaises(library.LibraryError):
+            library.uploaded_file(uploads, "C:\\Windows\\win.ini")
+        self.assertIsNone(library.uploaded_file(uploads, None))
+
 
 class TestStyles(unittest.TestCase):
     def test_every_style_is_valid(self):
