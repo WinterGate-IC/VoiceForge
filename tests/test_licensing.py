@@ -59,6 +59,9 @@ class TestParsing(unittest.TestCase):
         with self.assertRaisesRegex(licensing.LicenseError, "different machine"):
             licensing.parse_token(
                 bound, machine="some-other-machine", today=BEFORE_EXPIRY)
+        # Omitting the machine must fail closed, not skip the binding check.
+        with self.assertRaisesRegex(licensing.LicenseError, "different machine"):
+            licensing.parse_token(bound, today=BEFORE_EXPIRY)
 
     def test_malformed_tokens_are_rejected(self):
         for value in ("", "nope", "VF1.aaa", "VF1.aaa.bbb.ccc", "XX1.aaa.bbb"):

@@ -195,7 +195,10 @@ def parse_token(
     if bound not in (None, ""):
         if not isinstance(bound, str):
             raise LicenseError("licence machine binding must be a string")
-        if machine is not None and not hmac.compare_digest(bound, machine):
+        # Never fall back to "unbound" when the caller omits the machine: a
+        # licence bound to one machine must also fail closed on this one.
+        current = machine if machine is not None else machine_id()
+        if not hmac.compare_digest(bound, current):
             raise LicenseError("licence is bound to a different machine")
 
     licence = License(
