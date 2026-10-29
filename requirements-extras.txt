@@ -1,4 +1,4 @@
 # Optional alternate front-ends, installed from the launcher on demand.
 gradio>=6.0.0
 pywebview>=5.0
-flet[all]==0.28.3
+flet[all]==1.0.5
