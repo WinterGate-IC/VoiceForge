@@ -2,4 +2,4 @@
 edge-tts>=7.0.0
 numpy>=1.26
 soundfile>=0.12.1
-PySide6-Addons>=6.6
+PySide6-Addons>=6.12.0
