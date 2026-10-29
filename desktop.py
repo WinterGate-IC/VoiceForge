@@ -44,6 +44,7 @@ from PySide6.QtWidgets import (  # noqa: E402
 
 from voiceforge import branding, env as vf_env  # noqa: E402
 from voiceforge import audio_io, help_content, help_dialogs  # noqa: E402
+from voiceforge import extensions, licensing  # noqa: E402
 from voiceforge import library, paths, qt_theme, seed, styles  # noqa: E402
 from voiceforge import voice_choices  # noqa: E402
 from voiceforge.advanced_effects import (  # noqa: E402
@@ -576,9 +577,38 @@ class MainWindow(QMainWindow):
         help_menu.addAction(act_help)
         help_menu.addAction(act_about)
         help_menu.addSeparator()
+        act_license = QAction("Licence status…", self)
+        act_license.triggered.connect(self._open_license)
+        help_menu.addAction(act_license)
+        help_menu.addSeparator()
         act_launcher = QAction("Back to Launcher…", self)
         act_launcher.triggered.connect(self._menu_back_to_launcher)
         help_menu.addAction(act_launcher)
+
+    def _open_license(self) -> None:
+        status = licensing.describe_status()
+        if not status["licensed"]:
+            text = (
+                "VoiceForge open-source edition.\n\n"
+                "Every feature in this build is available without a licence. "
+                "Optional add-ons stay disabled until a licence is installed.\n\n"
+                f"Machine id: {status['machine']}\n"
+                "Install one with:  vf license install <file>\n\n"
+                "Licences: https://wintergate.org"
+            )
+        else:
+            expiry = "never (perpetual)" if status["perpetual"] else status["expires"]
+            addons = ", ".join(a.label for a in extensions.registry.addons) or "none"
+            text = (
+                f"Edition: {status['edition']}\n"
+                f"Licensed to: {status['licensee']} <{status['email']}>\n"
+                f"Licence id: {status['id']}\n"
+                f"Expires: {expiry}\n"
+                f"Features: {', '.join(status['features'])}\n"
+                f"Add-ons: {addons}\n"
+                f"Licence file: {status['license_path']}"
+            )
+        QMessageBox.information(self, "Licence status", text)
 
     def _build_ui(self) -> None:
         central = QWidget()
@@ -2447,6 +2477,7 @@ class MainWindow(QMainWindow):
 
 def main() -> int:
     app = QApplication(sys.argv)
+    extensions.load()
     app.setApplicationName("VoiceForge")
     app.setApplicationDisplayName("VoiceForge")
     icon = branding.qicon()

@@ -13,6 +13,8 @@ from pathlib import Path
 from typing import Any
 
 from . import library
+from . import extensions
+from . import licensing
 from . import presets as presets_mod
 from . import seed as seed_mod
 from . import styles as styles_mod
@@ -352,15 +354,66 @@ def _report(path: Path, project: Project, engine: str) -> None:
 
 
 # ---------------------------------------------------------------- parser
-def build_parser() -> argparse.ArgumentParser:
+def cmd_license(args: argparse.Namespace, project: Project) -> int:
+    """Inspect, install or remove a WinterGate licence."""
+    action = args.action
+    if action == "machine-id":
+        print(licensing.machine_id())
+        return 0
+    if action == "status":
+        print(json.dumps(licensing.describe_status(), indent=2))
+        return 0
+    if action == "addons":
+        rows = extensions.registry.addons
+        if not rows:
+            print("no add-ons installed (the open-source edition is complete on its own)")
+            for error in extensions.registry.errors:
+                print(f"  warning: {error}", file=sys.stderr)
+            return 0
+        for addon in rows:
+            state = "enabled" if addon.enabled else "not licensed"
+            features = ", ".join(addon.features) or "-"
+            print(f"{addon.label:<28} {state:<12} features: {features}")
+        return 0
+    if action == "install":
+        if not args.token:
+            print("usage: vf license install <token|file>", file=sys.stderr)
+            return 2
+        source = Path(args.token)
+        try:
+            token = (source.read_text(encoding="utf-8").strip()
+                     if source.is_file() else args.token)
+            written = licensing.install_license(token)
+        except (OSError, licensing.LicenseError) as exc:
+            print(f"could not install licence: {exc}", file=sys.stderr)
+            return 1
+        print(f"installed licence at {written}")
+        return 0
+    if action == "remove":
+        print("licence removed" if licensing.revoke_license()
+              else "no licence file found")
+        return 0
+    print(f"unknown action {action!r}", file=sys.stderr)
+    return 2
+
+
+def build_parser(registry: extensions.Registry | None = None) -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="vf", description="VoiceForge - a custom voice you can actually tune.")
     sub = p.add_subparsers(dest="command", required=True)
+    # Add-ons need the live subparser action to add their own commands.
+    p._voiceforge_subparsers = sub
 
     def add(name: str, func, help_text: str) -> argparse.ArgumentParser:
         sp = sub.add_parser(name, help=help_text)
         sp.set_defaults(func=func)
         return sp
+
+    s = add("license", cmd_license, "show, install or remove a licence")
+    s.add_argument("action", nargs="?", default="status",
+                   choices=["status", "install", "remove", "machine-id", "addons"])
+    s.add_argument("token", nargs="?", default=None,
+                   help="licence token or a file containing it (for `install`)")
 
     s = add("set", cmd_set, "change one or more settings")
     s.add_argument("pairs", nargs="*", help="name=value, e.g. rate=+10% pitch=-20Hz")
@@ -434,11 +487,14 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--engine", choices=["edge", "clone"], default=None)
     s.add_argument("--voice", default=None, help="library voice to use")
 
+    if registry is not None:
+        registry.apply_cli(p)
     return p
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
+    extensions.load()
+    parser = build_parser(extensions.registry)
     args = parser.parse_args(argv)
     project = Project.load(find_root())
     seed_mod.ensure_defaults(project.root)

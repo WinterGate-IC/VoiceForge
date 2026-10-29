@@ -539,6 +539,10 @@ to obtain their source, are listed in `THIRD_PARTY_NOTICES.md` and `licenses/`.
 The optional XTTS v2 clone engine is not part of the standard release; its
 weights are CPML (non-commercial).
 
+The name and logo are not part of the MIT grant; see `TRADEMARKS.md`.
+`OPEN_CORE.md` explains how a future paid add-on can exist without changing
+this edition: everything in this repository stays free and complete.
+
 VoiceForge is built by **WinterGate Intelligence Collective** —
 [wintergate.org](https://wintergate.org). Owner: **AnonCatalyst**.
 

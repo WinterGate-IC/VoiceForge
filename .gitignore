@@ -23,7 +23,7 @@ preferences.json
 project.json
 project.json.tmp
 presets/*.json
-voices/*/reference.*
+voices/
 *.log
 
 # Local editor / OS noise
@@ -33,3 +33,10 @@ voices/*/reference.*
 Thumbs.db
 desktop.ini
 releases/
+
+# Licence files belong in the user's config folder, not the repository.
+/license.key
+*.license
+!tests/fixtures/*.license
+*.key
+keys/

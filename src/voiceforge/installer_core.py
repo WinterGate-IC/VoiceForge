@@ -58,6 +58,23 @@ IGNORE = shutil.ignore_patterns(
 )
 
 IS_WINDOWS = sys.platform.startswith("win")
+
+
+def _fs_path(path: Path | str) -> str:
+    """Return a Windows extended-length path when the normal path is too long.
+
+    The default Windows MAX_PATH limit is 260 characters. A bundled Python
+    runtime contains paths close to that, and a user is free to install into a
+    deeper folder, so every file operation that can create a path uses this.
+    """
+    text = os.fspath(path)
+    if not IS_WINDOWS or text.startswith("\\\\?\\"):
+        return text
+    if len(text) < 240:
+        return text
+    if text.startswith("\\\\"):
+        return "\\\\?\\UNC\\" + text[2:]
+    return "\\\\?\\" + os.path.abspath(text)
 IS_MAC = sys.platform == "darwin"
 
 
@@ -442,8 +459,8 @@ def _extract_payload(plan: InstallPlan, archive_path: Path) -> int:
             if not name or name.startswith("/") or ".." in parts:
                 continue
             target = app.joinpath(*parts)
-            target.parent.mkdir(parents=True, exist_ok=True)
-            with archive.open(item) as source, open(target, "wb") as destination:
+            os.makedirs(_fs_path(target.parent), exist_ok=True)
+            with archive.open(item) as source, open(_fs_path(target), "wb") as destination:
                 shutil.copyfileobj(source, destination, 1024 * 1024)
             if index % step == 0 or index == total:
                 message = f"Unpacking the program … {index}/{total} files"
@@ -797,7 +814,7 @@ def uninstall(app_dir: Path, purge_data: bool = False,
     data_dir = Path(config.get("data_dir", "")) if config.get("data_dir") else None
     if purge_data and data_dir and data_dir.is_dir():
         try:
-            shutil.rmtree(data_dir)
+            shutil.rmtree(_fs_path(data_dir))
             removed.append(str(data_dir))
             say(f"Removed your data at {data_dir}")
         except OSError as exc:
@@ -810,9 +827,9 @@ def uninstall(app_dir: Path, purge_data: bool = False,
             continue
         try:
             if child.is_dir():
-                shutil.rmtree(child)
+                shutil.rmtree(_fs_path(child))
             else:
-                child.unlink()
+                os.unlink(_fs_path(child))
             removed.append(str(child))
         except OSError as exc:
             say(f"Could not remove {child}: {exc}")

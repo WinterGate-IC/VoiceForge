@@ -81,7 +81,7 @@ SITE_EXCLUDE_PREFIX = (
 # audio or platform plugin on a customer's machine.
 PYSIDE_EXCLUDE_DIRS = {
     "doc", "include", "typesystems", "scripts", "support", "glue",
-    "metatypes",
+    "metatypes", "qml",
 }
 
 # Python's own test/demo/teaching trees are not needed to run an app.
@@ -178,8 +178,13 @@ def run(command: list[str], cwd: Path, env: dict[str, str] | None = None,
 
 
 # ---------------------------------------------------------------------- stage
-def stage_program(destination: Path) -> None:
-    """Copy the program exactly as ``installer_core`` would for a checkout."""
+def stage_program(destination: Path, addons: tuple[Path, ...] = ()) -> None:
+    """Copy the program exactly as ``installer_core`` would for a checkout.
+
+    ``addons`` is only used by the private build: each folder is a Python
+    package copied to ``src/voiceforge/addons``. The public build passes
+    nothing, so an open-source package can never contain paid code.
+    """
     log(f"staging the program in {destination}")
     destination.mkdir(parents=True, exist_ok=True)
     copied = 0
@@ -199,6 +204,12 @@ def stage_program(destination: Path) -> None:
         fail("staging did not produce launcher.py")
     if not (destination / "src/voiceforge").is_dir():
         fail("staging did not produce src/voiceforge")
+    if addons:
+        addon_root = destination / "src" / "voiceforge" / "addons"
+        addon_root.mkdir(parents=True, exist_ok=True)
+        for addon in addons:
+            shutil.copytree(addon, addon_root / addon.name, dirs_exist_ok=True)
+            log(f"bundled private add-on {addon.name}")
     log(f"staged {copied} program item(s)")
 
 
@@ -498,7 +509,20 @@ def main(argv: list[str] | None = None) -> int:
                         help="skip the runtime smoke tests")
     parser.add_argument("--no-clean", action="store_true",
                         help="reuse the existing build folder")
+    parser.add_argument(
+        "--addon", action="append", default=[], metavar="DIR",
+        help="bundle a private add-on package; not used by open-source builds",
+    )
     args = parser.parse_args(argv)
+
+    addons: list[Path] = []
+    for item in args.addon:
+        path = Path(item).expanduser().resolve()
+        if not (path / "__init__.py").is_file():
+            fail(f"add-on {path} is not a Python package")
+        addons.append(path)
+    if addons:
+        log(f"private build with {len(addons)} add-on(s)")
 
     vf_env.sanitize()
     if not IS_WINDOWS:
@@ -511,7 +535,7 @@ def main(argv: list[str] | None = None) -> int:
     stage = STAGE_ROOT / STAGE_FOLDER
     stage.mkdir(parents=True, exist_ok=True)
 
-    stage_program(stage)
+    stage_program(stage, tuple(addons))
     assemble_runtime(stage / RUNTIME_DIR)
 
     PACKAGE_DIR.mkdir(parents=True, exist_ok=True)
