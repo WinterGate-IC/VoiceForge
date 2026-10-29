@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024"
+     viewBox="0 0 1024 1024" role="img"
+     aria-label="VoiceForge - an icy gate framing a warm waveform">
+  <title>VoiceForge</title>
+  <desc>A mint WinterGate arch holding an ember-orange waveform in the shape of a V.</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#161d26"/>
+      <stop offset="0.55" stop-color="#0b0f14"/>
+      <stop offset="1" stop-color="#05070a"/>
+    </linearGradient>
+    <linearGradient id="gate" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0" stop-color="#b6ffe0"/>
+      <stop offset="0.45" stop-color="#00ff9d"/>
+      <stop offset="1" stop-color="#00b8ff"/>
+    </linearGradient>
+    <linearGradient id="ember" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd37d"/>
+      <stop offset="0.45" stop-color="#ff8a1f"/>
+      <stop offset="1" stop-color="#ff3d5e"/>
+    </linearGradient>
+    <radialGradient id="mintGlow" cx="0.5" cy="0.46" r="0.52">
+      <stop offset="0" stop-color="#00ff9d" stop-opacity="0.22"/>
+      <stop offset="0.55" stop-color="#00ff9d" stop-opacity="0.06"/>
+      <stop offset="1" stop-color="#00ff9d" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="emberGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff7a18" stop-opacity="0.30"/>
+      <stop offset="0.6" stop-color="#ff3d5e" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#ff3d5e" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Tile -->
+  <rect x="40" y="40" width="944" height="944" rx="222" fill="url(#bg)"/>
+  <rect x="41.5" y="41.5" width="941" height="941" rx="221"
+        fill="none" stroke="#2a3540" stroke-width="3"/>
+  <rect x="76" y="76" width="872" height="872" rx="192"
+        fill="none" stroke="#00ff9d" stroke-opacity="0.10" stroke-width="2"/>
+
+  <!-- Cold light behind the gate -->
+  <circle cx="512" cy="486" r="372" fill="url(#mintGlow)"/>
+
+  <!-- The gate -->
+  <path d="M 292 800 L 292 492 A 220 220 0 0 1 732 492 L 732 800"
+        fill="none" stroke="url(#gate)" stroke-width="44"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 348 800 L 348 498 A 164 164 0 0 1 676 498 L 676 800"
+        fill="none" stroke="#9bffd4" stroke-opacity="0.22" stroke-width="9"
+        stroke-linecap="round"/>
+  <path d="M 238 826 L 786 826" fill="none" stroke="url(#gate)"
+        stroke-opacity="0.62" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- Frost keystone -->
+  <path d="M 512 202 L 536 240 L 512 278 L 488 240 Z" fill="#eafff7"/>
+  <path d="M 512 220 L 523 240 L 512 260 L 501 240 Z" fill="#0a0f14"
+        fill-opacity="0.45"/>
+
+  <!-- Warm voice inside the cold gate: a V-shaped waveform -->
+  <ellipse cx="512" cy="620" rx="246" ry="176" fill="url(#emberGlow)"/>
+  <g fill="url(#ember)">
+    <rect x="312" y="480" width="40" height="280" rx="20"/>
+    <rect x="372" y="520" width="40" height="200" rx="20"/>
+    <rect x="432" y="554" width="40" height="132" rx="20"/>
+    <rect x="492" y="574" width="40" height="92" rx="20"/>
+    <rect x="552" y="554" width="40" height="132" rx="20"/>
+    <rect x="612" y="520" width="40" height="200" rx="20"/>
+    <rect x="672" y="480" width="40" height="280" rx="20"/>
+  </g>
+  <g fill="#fff3df" fill-opacity="0.55">
+    <rect x="325" y="494" width="14" height="252" rx="7"/>
+    <rect x="385" y="534" width="14" height="172" rx="7"/>
+    <rect x="445" y="568" width="14" height="104" rx="7"/>
+    <rect x="505" y="588" width="14" height="64" rx="7"/>
+    <rect x="565" y="568" width="14" height="104" rx="7"/>
+    <rect x="625" y="534" width="14" height="172" rx="7"/>
+    <rect x="685" y="494" width="14" height="252" rx="7"/>
+  </g>
+</svg>

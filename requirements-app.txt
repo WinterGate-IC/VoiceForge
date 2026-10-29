@@ -1,0 +1,5 @@
+# The native app only. This is what the installer puts in the venv.
+edge-tts>=7.0.0
+numpy>=1.26
+soundfile>=0.12.1
+PySide6-Addons>=6.6

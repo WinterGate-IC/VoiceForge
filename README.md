@@ -20,6 +20,7 @@ Open the release zip. Inside it you will find:
 | `VoiceForge-Setup-1.1.0.exe` | **Installer** — fully offline. It contains the same package, copies it to a folder you choose, creates Desktop and Start Menu shortcuts, records your library folder and adds an uninstaller. |
 | `README.md` | This file. |
 | `LICENSE` | MIT licence and source/voice notices. |
+| `THIRD_PARTY_NOTICES.md` | Licences for the libraries bundled in the package. |
 
 The installer needs **no Python, no pip and no internet connection**. Run it
 from anywhere, including after copying it to another drive or machine.
@@ -529,7 +530,14 @@ preview.
 
 ## Licence and credits
 
-MIT licence. See `LICENSE`.
+VoiceForge's own source is released under the MIT licence. See `LICENSE`.
+
+The Windows release bundles third-party libraries, including the LGPL-3.0
+`edge-tts` client and Qt for Python (PySide6), the BSD-3 `soundfile`/libsndfile
+stack, Apache-2.0 Gradio and Flet, and BSD-3 pywebview. Their licences, and how
+to obtain their source, are listed in `THIRD_PARTY_NOTICES.md` and `licenses/`.
+The optional XTTS v2 clone engine is not part of the standard release; its
+weights are CPML (non-commercial).
 
 VoiceForge is built by **WinterGate Intelligence Collective** —
 [wintergate.org](https://wintergate.org). Owner: **AnonCatalyst**.

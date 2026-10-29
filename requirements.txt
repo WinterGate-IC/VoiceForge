@@ -1,0 +1,3 @@
+# Everything the app can use except the multi-GB clone engine.
+-r requirements-app.txt
+-r requirements-extras.txt

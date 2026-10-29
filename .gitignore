@@ -1,0 +1,35 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+*.spec
+
+# VoiceForge run-time state
+.cache/
+downloads/
+output/
+texts/
+install.json
+preferences.json
+project.json
+project.json.tmp
+presets/*.json
+voices/*/reference.*
+*.log
+
+# Local editor / OS noise
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+releases/

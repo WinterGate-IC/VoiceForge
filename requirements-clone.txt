@@ -1,0 +1,5 @@
+# Optional: real voice cloning (XTTS v2).
+# ~2.5 GB of torch. On a CPU-only machine expect about 0.3-0.5x realtime.
+# XTTS v2 weights are CPML-licenced: non-commercial use.
+coqui-tts>=0.25.0
+torch>=2.2

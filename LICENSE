@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 WinterGate Intelligence Collective
+Copyright (c) 2026 WinterGate Intelligence Collective (WIC)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,15 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+VoiceForge is a product of WinterGate Intelligence Collective.
+https://wintergate.org
+
+The bundled Microsoft Edge neural voices are provided by Microsoft through
+the public edge-tts service and remain subject to Microsoft's terms. The
+optional XTTS v2 cloning engine uses CPML-licensed weights and is
+non-commercial; it is not included in the standard release.
+
+Only clone your own voice, or a voice you have written permission to use.
