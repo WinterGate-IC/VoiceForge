@@ -217,6 +217,25 @@ class TestLibrary(unittest.TestCase):
         with self.assertRaises(library.LibraryError):
             library.attach_sample(self.root, "v2", bad)
 
+    def test_attach_rejects_file_outside_the_upload_root(self):
+        library.create(self.root, "v3", {})
+        outside = self.root / "outside.wav"
+        outside.write_bytes(b"RIFF0000WAVE")
+        uploads = self.root / "uploads"
+        uploads.mkdir()
+        with self.assertRaises(library.LibraryError):
+            library.attach_sample(self.root, "v3", outside, source_root=uploads)
+        self.assertIsNone(library.audio_in(self.root, "v3"))
+
+    def test_attach_accepts_file_inside_the_upload_root(self):
+        library.create(self.root, "v4", {})
+        uploads = self.root / "uploads"
+        uploads.mkdir()
+        inside = uploads / "recording.wav"
+        inside.write_bytes(b"RIFF0000WAVE")
+        library.attach_sample(self.root, "v4", inside, source_root=uploads)
+        self.assertIsNotNone(library.audio_in(self.root, "v4"))
+
 
 class TestStyles(unittest.TestCase):
     def test_every_style_is_valid(self):

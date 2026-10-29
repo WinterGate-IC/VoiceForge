@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
@@ -13,7 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from voiceforge import library, seed  # noqa: E402
 from voiceforge.render import concatenate_audio  # noqa: E402
 from voiceforge.textsplit import (  # noqa: E402
-    DEFAULT_LIMIT, _hard_split, plan, split_for_speech,
+    DEFAULT_LIMIT, _hard_split, normalise, plan, split_for_speech,
 )
 
 
@@ -53,6 +54,18 @@ class TestSplitter(unittest.TestCase):
         pieces = _hard_split(token, 200)
         self.assertEqual(len(pieces), 5)
         self.assertEqual("".join(pieces), token)
+
+    def test_trailing_whitespace_is_trimmed_per_line(self):
+        self.assertEqual(normalise("a  \t\nb\t\t\nc"), "a\nb\nc")
+        self.assertEqual(normalise("  one \n\n two  "), "one\n\n two")
+
+    def test_pathological_tabs_stay_linear(self):
+        # A regex like r"[ \t]+\n" is quadratic here; the splitter must not
+        # spend seconds on input a hostile page could send.
+        text = "\t" * 200_000 + "end"
+        started = time.perf_counter()
+        self.assertEqual(normalise(text), "end")
+        self.assertLess(time.perf_counter() - started, 2.0)
 
     def test_plan_counts(self):
         info = plan("One two three. Four five.")

@@ -35,7 +35,9 @@ class Plan:
 
 def normalise(text: str) -> str:
     text = (text or "").replace("\r\n", "\n").replace("\r", "\n")
-    text = re.sub(r"[ \t]+\n", "\n", text)
+    # Strip trailing spaces/tabs per line without a backtracking regex: a
+    # pattern like r"[ \t]+\n" is quadratic on a long run of tabs (CWE-1333).
+    text = "\n".join(line.rstrip(" \t") for line in text.split("\n"))
     return text.strip()
 
 

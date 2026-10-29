@@ -12,6 +12,7 @@ import json
 import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
@@ -201,6 +202,31 @@ def _slider_values(rate, pitch, volume, effect, speed, temp, top_k, top_p,
     return values
 
 
+def _upload_root() -> Path:
+    """Gradio's upload folder. Recordings must come from inside it."""
+    configured = os.environ.get("GRADIO_TEMP_DIR")
+    root = Path(configured) if configured else Path(tempfile.gettempdir()) / "gradio"
+    return Path(os.path.realpath(root))
+
+
+def _uploaded_sample(value: object) -> Path | None:
+    """Accept only a file Gradio uploaded, never a path typed by a request.
+
+    The audio component is local, but its value arrives over HTTP. Without this
+    check a crafted API call could name any readable file on the machine and
+    have it copied into the library (CWE-22).
+    """
+    if not value:
+        return None
+    candidate = Path(os.path.realpath(os.fspath(value)))
+    root = _upload_root()
+    if not str(candidate).startswith(str(root) + os.sep):
+        raise ValueError("the recording must be uploaded through this page")
+    if not candidate.is_file():
+        raise ValueError("the recording is missing")
+    return candidate
+
+
 def do_create(name, notes, sample, edge_voice, rate, pitch, volume, effect,
               speed, temp, top_k, top_p, rep):
     if not name or not name.strip():
@@ -216,7 +242,8 @@ def do_create(name, notes, sample, edge_voice, rate, pitch, volume, effect,
         prof = library.create(DATA, name, dict(project.settings),
                               notes=notes or "", overwrite=True)
         if sample:
-            library.attach_sample(DATA, prof.name, Path(sample))
+            library.attach_sample(DATA, prof.name, _uploaded_sample(sample),
+                                  source_root=_upload_root())
     except Exception as exc:
         return lib_rows(), gr.update(), f"**Could not create:** {exc}"
     kind = "cloned" if library.audio_in(DATA, prof.name) else "designed"
@@ -230,7 +257,8 @@ def do_attach(name, sample):
     if not sample:
         return lib_rows(), "**Choose or record a sample first.**"
     try:
-        dest = library.attach_sample(DATA, name, Path(sample))
+        dest = library.attach_sample(DATA, name, _uploaded_sample(sample),
+                                     source_root=_upload_root())
     except Exception as exc:
         return lib_rows(), f"**Could not attach:** {exc}"
     return lib_rows(), (f"Attached `{dest.name}` to **{library.slug(name)}** - "

@@ -16,6 +16,7 @@ Nothing here sends audio anywhere. Everything stays under the project folder.
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
 from dataclasses import dataclass, field
@@ -189,12 +190,28 @@ def update(root: Path, name: str, settings: dict[str, Any],
     return prof
 
 
-def attach_sample(root: Path, name: str, src: Path) -> Path:
-    src = Path(src).expanduser()
-    if not src.exists():
-        raise LibraryError(f"no such file: {src}")
-    if src.suffix.lower() not in AUDIO_SUFFIXES:
-        raise LibraryError(f"unsupported audio type {src.suffix} (wav/mp3/flac/m4a/ogg)")
+def _resolve_source(src: Path, source_root: Path | None) -> Path:
+    """Canonicalise a recording path, optionally confined to an upload root.
+
+    The CLI passes no root: a local user may attach any file they can read.
+    The web UI passes its upload folder, so a request cannot name an arbitrary
+    file on the server (CWE-22).
+    """
+    candidate = Path(os.path.realpath(Path(src).expanduser()))
+    if source_root is not None:
+        root = Path(os.path.realpath(Path(source_root)))
+        if not str(candidate).startswith(str(root) + os.sep):
+            raise LibraryError("recording must be uploaded through the app")
+    if not candidate.is_file():
+        raise LibraryError(f"no such file: {candidate}")
+    if candidate.suffix.lower() not in AUDIO_SUFFIXES:
+        raise LibraryError(f"unsupported audio type {candidate.suffix} (wav/mp3/flac/m4a/ogg)")
+    return candidate
+
+
+def attach_sample(root: Path, name: str, src: Path,
+                  source_root: Path | None = None) -> Path:
+    src = _resolve_source(src, source_root)
     d = folder(root, name)
     d.mkdir(parents=True, exist_ok=True)
     for old in d.iterdir():
