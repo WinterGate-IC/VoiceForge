@@ -54,6 +54,24 @@ VoiceForge**, or run `uninstall.py` from the program folder. All three show a
 warning first and ask separately whether to delete the library. The default is
 to keep it.
 
+### Verify the download
+
+Releases are **not code-signed yet**, so Windows SmartScreen may show
+"Unknown publisher" the first time you run the installer or the app. That is
+expected; a trusted signature requires a certificate issued to a registered
+legal entity. See [CODE_SIGNING.md](CODE_SIGNING.md) for the status and the path
+to signed builds.
+
+Verify the bundle before running it:
+
+```powershell
+Get-FileHash .\VoiceForge-<version>.zip -Algorithm SHA256
+```
+
+The digest must match the one in the release notes and in the release's
+`SHA256SUMS.txt`. If it does not, do not run the file; report it through
+[SECURITY.md](SECURITY.md).
+
 ---
 
 ## What it does
@@ -473,8 +491,10 @@ device, with no network and no Python installed.
 ## Troubleshooting
 
 **Windows SmartScreen says the publisher is unknown**
-The release is not code-signed. Choose **More info → Run anyway**. The
-installer is a standard per-user app and needs no administrator rights.
+The release is not code-signed, so Windows cannot show a verified publisher.
+Check the SHA-256 first (see [CODE_SIGNING.md](CODE_SIGNING.md)), then choose
+**More info → Run anyway**. The installer is a standard per-user app and needs
+no administrator rights.
 
 **The default engine fails or times out**
 It needs network access to Microsoft's speech endpoint. Check the connection.
