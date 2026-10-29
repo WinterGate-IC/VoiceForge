@@ -6,10 +6,14 @@ updates:
       interval: weekly
     open-pull-requests-limit: 5
     ignore:
-      # Flet 1.x is a breaking rewrite; flet_app.py targets the 0.28 API and
-      # launcher.py pins flet[all]==0.28.3. Porting it is its own change.
+      # flet_app.py targets the Flet 0.28 API and launcher.py pins
+      # flet[all]==0.28.3, so any version change is a breaking rewrite.
+      # Minor is listed too because Flet is still 0.x: 0.28 -> 0.86 counts as
+      # a semver-minor bump, which a major-only rule would miss.
       - dependency-name: "flet"
-        update-types: ["version-update:semver-major"]
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
   - package-ecosystem: github-actions
     directory: "/"
     schedule:
