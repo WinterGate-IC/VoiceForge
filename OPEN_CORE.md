@@ -39,7 +39,8 @@ cannot *create* one. The signing key stays offline.
 3. A feature is enabled only when a correctly signed licence covers that name.
    CLI commands and hooks for unlicensed features are not added at all.
 4. Every valuable operation in the add-on also calls
-   `licensing.require("feature")`. Importing the code is not enough to run it.
+   `licensing.require("feature")` (or uses the `@licensing.licensed("feature")`
+   decorator). Importing the code is not enough to run it.
 
 Licence tokens are offline-verifiable RSA PKCS#1 v1.5 / SHA-256 signatures:
 

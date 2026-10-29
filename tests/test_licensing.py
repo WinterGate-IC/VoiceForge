@@ -90,6 +90,24 @@ class TestGating(unittest.TestCase):
             with self.assertRaisesRegex(licensing.LicenseError, "does not include"):
                 licensing.require("batch")
 
+    def test_licensed_decorator_blocks_before_running(self):
+        calls = []
+
+        @licensing.licensed("studio")
+        def work(value):
+            calls.append(value)
+            return value * 2
+
+        with mock.patch.object(licensing, "active_license", lambda **_: None):
+            with self.assertRaises(licensing.LicenseError):
+                work(1)
+            self.assertEqual(calls, [])
+
+        with mock.patch.object(licensing, "active_license",
+                               lambda **_: self._licence({"studio"})):
+            self.assertEqual(work(2), 4)
+            self.assertEqual(calls, [2])
+
     def test_install_and_revoke(self):
         with tempfile.TemporaryDirectory() as folder:
             target = Path(folder) / "license.key"

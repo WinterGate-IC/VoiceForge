@@ -19,6 +19,7 @@ from __future__ import annotations
 import base64
 import binascii
 import datetime as dt
+import functools
 import hashlib
 import hmac
 import json
@@ -63,6 +64,7 @@ __all__ = [
     "default_license_path",
     "describe_status",
     "install_license",
+    "licensed",
     "machine_id",
     "parse_token",
     "require",
@@ -321,6 +323,25 @@ def require(feature: str) -> License:
     if not licence.allows(feature):
         raise LicenseError(f"your licence does not include {feature!r}")
     return licence
+
+
+def licensed(feature: str):
+    """Decorator form of :func:`require` for add-on entry points.
+
+    Apply it to the function itself, not only to the CLI handler, so a direct
+    import cannot bypass the check::
+
+        @licensing.licensed("studio")
+        def render_studio(...):
+            ...
+    """
+    def decorate(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            require(feature)
+            return func(*args, **kwargs)
+        return wrapper
+    return decorate
 
 
 def install_license(token: str, *, path: Path | None = None) -> Path:
