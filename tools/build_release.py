@@ -1,12 +1,14 @@
 """Build the complete, offline VoiceForge release.
 
 The result is a timestamped folder under ``releases/`` containing exactly the
-four things a person needs:
+six things a person needs:
 
     VoiceForge-1.1.0-windows-x64.zip   the portable app and its Python runtime
     VoiceForge-Setup-1.1.0.exe         the offline Qt installer
     README.md
     LICENSE
+    TRADEMARKS.md                      name and authorship terms
+    CODE_SIGNING.md                    signing status and verification
 
 The important constraint is that the Setup executable must work *by itself*,
 on a machine with no Python, no pip and no network. It therefore embeds the
@@ -56,6 +58,11 @@ STAGE_ROOT = BUILD / "stage"
 PACKAGE_DIR = BUILD / "package"
 SETUP_DIR = BUILD / "setup"
 TEST_DIR = BUILD / "test-install"
+
+# Shipped next to the binaries so the downloaded zip carries the name,
+# authorship and signing terms, not only the repository.
+RELEASE_DOCS = ("README.md", "LICENSE", "THIRD_PARTY_NOTICES.md",
+                "TRADEMARKS.md", "CODE_SIGNING.md")
 
 # Anything here is build tooling, not something the running app needs.
 SITE_EXCLUDE_TOP = {
@@ -475,7 +482,7 @@ def make_release(package: Path, setup_exe: Path) -> Path:
                          compresslevel=6, allowZip64=True) as archive:
         archive.write(package, package.name)
         archive.write(setup_exe, setup_exe.name)
-        for name in ("README.md", "LICENSE", "THIRD_PARTY_NOTICES.md"):
+        for name in RELEASE_DOCS:
             source = ROOT / name
             if not source.is_file():
                 fail(f"the release is missing {name}")
@@ -491,8 +498,7 @@ def make_release(package: Path, setup_exe: Path) -> Path:
     with zipfile.ZipFile(target) as archive:
         names = sorted(archive.namelist())
     expected = sorted(
-        [package.name, setup_exe.name, "README.md", "LICENSE",
-         "THIRD_PARTY_NOTICES.md"]
+        [package.name, setup_exe.name, *RELEASE_DOCS]
         + [(Path("licenses") / path.relative_to(licenses)).as_posix()
            for path in sorted(licenses.rglob("*")) if path.is_file()])
     if names != expected:
